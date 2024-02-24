@@ -1,19 +1,19 @@
 #include <iostream>
-#define PERIOD  60
+const int PERIOD = 60;
 
 struct ComplexNumber {
     double a = 0;
     double b = 0;
 };
 
-struct Size1 { // What is the size her?
+struct Size1 { // What is the size here?
     bool a;
     double b;
     int c;
 };
 
 
-struct Size2 { // What is the size her?
+struct Size2 { // What is the size here?
     bool a;
     int c;
     double b;
