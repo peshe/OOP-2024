@@ -568,6 +568,11 @@ int main() {
 Тази идея е грешна поради следното правило
 
 ### Изисквания за подравняване за структури (Alignment requirements)
+
+> << Бележка след семинар 26.02.2024 >>
+> Когато изчисляваме колко памет би заела една структура, големината на масивите влиза в изчисленията, но само типът влиза при изчисленията за изискванията за подравняване. 
+(Виж задачите за по-подробни обяснения)
+
 За оптимален достъп от операционната система, всяко едно от полетата на дадена структура **изискват да са подравнени на адрес кратен на размера на типа на даденото поле**.
 
 <small><b>integers - 4 байта</b></small>
@@ -635,7 +640,7 @@ struct WeatherData {
 
 ```c++
 struct UserProfile {
-    char username[15];
+    char username[11];
     bool isActive;
     unsigned int loginCount;
     double lastLoginTime;
@@ -646,6 +651,20 @@ struct UserProfile {
 Колко памет би заела тази структура на 32-битова система?
 <details>
 <summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+1b * 11 + 1b + 4b + 8b = 24b;
+Изискванията за подравняване на всяко поле са изпълнени и няма padding.
+
+</details>
+<br/>
+
+<small><b>Въпрос 2</b></small> 
+Как би могла да бъде оптимизирана?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+
+Дадената структура е оптимизирана, тъй като `unsigned int loginCount` има 12 байта преди себе и неговите изисквания за подравняване са изпълнени, същото важи за полето `double lastLoginTime`, което има 16 байта преди себе си.
+
+Все пак, за да следваме добрите практики е по-добре да променим структурата като пренаредим полетата:
 
 ```c++
 struct UserProfile {
@@ -655,18 +674,9 @@ struct UserProfile {
     bool isActive;
 };
 ```
+
 </details>
 <br/>
-
-<small><b>Въпрос 2</b></small> 
-Как би могла да бъде оптимизирана?
-<details>
-<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
-<p>text</p>
-</details>
-<br/>
-
-
 
 ### Задача 2: Данни за автомобил
 
@@ -679,7 +689,36 @@ struct CarData {
 };
 ```
 
-Въпрос: Колко памет би заела тази структура на 64-битова система и как би могла да бъде оптимизирана?
+<small><b>Въпрос 1</b></small> 
+Колко памет би заела тази структура на 64-битова система?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+8b + 1b * 10 + 2BP + 4b + 1b + 7BP = 32b;
+
+BP = bytes padding.
+
++2BP, за да може `int yearOfManufacture` да се подравни четно на 4, т.е 20.
+
++7BP, защото имаме `double engineVolume`, който изисква допълване до число четно на 8 -> 32. 
+</details>
+<br/>
+
+<small><b>Въпрос 2</b></small> 
+Как би могла да бъде оптимизирана?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+
+```c++
+struct CarData {
+    double engineVolume;
+    int yearOfManufacture;
+    char brand[10];
+    bool isElectric;
+};
+```
+8b + 4b + 1b * 10 + 1 + 1BP = 24b;
+</details>
+<br/>
 
 ### Задача 3: Сензор за температура
 
@@ -691,25 +730,154 @@ struct TemperatureSensor {
     char unit; // 'C' for Celsius and 'F' for Fahrenheit
 };
 ```
-Въпрос: Колко памет би заела тази структура на 64-битова система и как би могла да бъде оптимизирана?
+
+
+<small><b>Въпрос 1</b></small> 
+Колко памет би заела тази структура на 64-битова система?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+1b * 8 + 8b + 1b + 1b + 6BP = 24b;
+
+</details>
+<br/>
+
+<small><b>Въпрос 2</b></small> 
+Как би могла да бъде оптимизирана?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+
+Структурата вече е оптимизирана, но следвайки добрите практики:
+
+```c++
+struct TemperatureSensor {
+    double currentTemperature;
+    char id[8];
+    char unit; // 'C' for Celsius and 'F' for Fahrenheit
+    bool isCalibrated;
+};
+```
+
+</details>
+<br/>
+
 
 ### Задача 4: Студентски регистър
 
 ```c++
 struct StudentRecord {
     unsigned int studentID;
+    char name[24];
     double gradeAverage;
-    char name[30];
     bool hasScholarship;
 };
 ```
 
-Въпрос: Колко памет би заела тази структура на 64-битова система и как би могла да бъде оптимизирана?
+
+<small><b>Въпрос 1</b></small> 
+Колко памет би заела тази структура на 64-битова система?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+4b + 1b * 24 + 4BP + 8b + 1b + 7BP = 48;
+
+`double gradeAverage` изисква байтове четни на 8 преди себе си, в случая 32, затова имаме 4 байта padding, както и цялата структура да е кратна на 8, което значи +7BP в края.
+
+</details>
+<br/>
+
+<small><b>Въпрос 2</b></small> 
+Как би могла да бъде оптимизирана?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+
+```c++
+struct StudentRecord {
+    double gradeAverage;
+    unsigned int studentID;
+    char name[24];
+    bool hasScholarship;
+};
+```
+8b + 4b + 24b + 1b + 3BP = 40b;
+
+</details>
+<br/>
+
+### Задача 5: Контактна Информация
+
+
+```c++
+struct ContactInfo {
+    char phoneNumber[15]; 
+    int birthYear;        
+    float accountBalance; 
+    bool hasNegativeBalance;
+    char* name;           
+    bool isFavorite;      
+};
+```
+
+<small><b>Въпрос 1</b></small> 
+Колко памет би заела тази структура на 64-битова система?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+
+1b * 15 + 1BP + 4b + 4b + 1b + 7BP + 8b + 1b + 7BP = 48b;
+
+</details>
+<br/>
+
+
+<small><b>Въпрос 2</b></small> 
+Колко памет би заела тази структура на 32-битова система?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+
+1b * 15 + 1BP + 4b + 4b + 1b + 3BP + 4b + 1b + 3BP = 36b;
+
+</details>
+<br/>
+
+<small><b>Въпрос 3</b></small> 
+Как би могла да бъде оптимизирана?
+<details>
+<summary>Отговор. Моля, първо реши задачата преди да гледаш решението.</summary>
+
+```c++
+struct ContactInfo {
+    char* name;           
+    int birthYear;        
+    float accountBalance; 
+    char phoneNumber[15]; 
+    bool hasNegativeBalance;
+    bool isFavorite;      
+};
+```
+
+При 64 битови системи:
+8b + 4b + 4b + 15b + 1b + 1b + 7BP = 40b;
+
+При 32 битови системи:
+4b + 4b + 4b + 15b + 1b + 1b + 3BP = 32b;
+
+</details>
+<br/>
 
 ---
 
 ## Битови полета
-TODO: Bit fields
+
+
+```c++
+struct S
+{
+    // will usually occupy 2 bytes:
+    unsigned char b1 : 3; // 1st 3 bits (in 1st byte) are b1
+    unsigned char    : 2; // next 2 bits (in 1st byte) are blocked out as unused
+    unsigned char b2 : 6; // 6 bits for b2 - doesn't fit into the 1st byte => starts a 2nd
+    unsigned char b3 : 2; // 2 bits for b3 - next (and final) bits in the 2nd byte
+};
+ 
+```
 
 ---
 
