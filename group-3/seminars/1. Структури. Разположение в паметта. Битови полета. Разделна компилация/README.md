@@ -977,6 +977,13 @@ TODO:
 ### Разделна компилация
 TODO: 
 
+---
+# Task list (for Yasen)
+
+TODO: spell check.
+TODO: Добри практики
+
+
  - hpp files -> C++ header files - contain declarations and definitions of structs, functions
  - cpp files -> C++ source files -> contain function definitions
  - hpp files have guards and are imported
@@ -990,15 +997,6 @@ TODO:
 - Направете структура `Address`, която включва отделни полета за държава, град, улица, блок + вход + етаж. + четене от конзола + писане в конзола, сравняване на 2 адреса дали са еднакви.
 - Triangle struct - perimeter, area, methods?
 - Разделяне на решената задача на повече от един файл. Методи.
-
-
-
-
----
-# Task list (for Yasen)
-
-TODO: spell check.
-TODO: Добри практики
 
 - дефиниране на структури в отделни файлове, excalidraw this + the include in vs
 - 1 file - 1 class, 1 struct - folder structure should convey what the codebase contains clearly. There are cases where you can break this convention, for now follow it.
