@@ -4,7 +4,8 @@
 int main()
 {
     /// Text file example
-    std::ofstream out("file.txt"); // Step 1 
+    std::ofstream out; // Step 1 
+    out.open("file.txt");
     if (!out) 
     { // Step 2 
         std::cout << "Couldn't open file for writing!" << std::endl;
@@ -22,7 +23,8 @@ int main()
     strcpy(str, "Test string");
 
     // Step 1 
-    std::ofstream outBin("data.bin");
+    std::ofstream outBin;
+    outBin.open("data.bin", std::ios::binary);
 
     // Step 2 
     if (!outBin) 
@@ -50,7 +52,8 @@ int main()
     char readStr[MAX_LEN] = {}; 
 
     // Step 1 
-    std::ifstream inBin("data.bin");
+    std::ifstream inBin;
+    inBin.open("data.bin", std::ios::binary);
 
     // Step 2 
     if (!inBin) 
