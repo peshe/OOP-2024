@@ -33,8 +33,7 @@ void generateStudentFile()
 
 void printStudentsFromFile()
 {
-    Student s;
-    s.name = NULL;
+    Student s{};
     fstream file("students.dat", ios::in | ios::binary);
 
     while (load(s, file))
@@ -80,4 +79,5 @@ int main()
 //    printStudentsFromFile();
 //    changeNameOfAllInf();
 //    printStudentsFromFile();
+  return 0;
 }

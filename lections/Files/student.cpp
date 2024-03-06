@@ -1,5 +1,5 @@
 /******************************************************/
-/* Примерен код към курса ООП, ФМИ (2018)
+/* Примерен код към курса ООП, ФМИ (2024)
 *  Пример за структури - структура студент            */
 /******************************************************/
 
@@ -173,22 +173,33 @@ bool load(Student& student, fstream& file)
     file.read((char*)&size, sizeof(size));
     if (!file) return false;
 
-    delete[] student.name;
-    if (!(student.name = new(std::nothrow) char[size + 1]))
+    Student tmp{};
+    if (!(tmp.name = new(std::nothrow) char[size + 1]))
         return false;
 
     std::streamsize readBytes = 0;
     while (readBytes < size) {
-        file.read(student.name + readBytes, size - readBytes);
-        if (!file) return false;
-        readBytes += file.gcount();
+        file.read(tmp.name + readBytes, size - readBytes);
+        std::streamsize read = file.gcount();
+        readBytes += read;
+        if (!file || read == 0) {
+            delete[] tmp.name;
+            return false;
+        }
     }
-    student.name[size] = '\0';
+    tmp.name[size] = '\0';
 
     size_t offset = (size_t)&((Student*)nullptr)->address;
     assert(offset == sizeof(void*));
 
-    file.read((char*)&student.address, sizeof(student) - offset);
+    file.read((char*)&tmp.address, sizeof(Student) - offset);
+    if (file.good()) {
+        delete[] student.name;
+        student = tmp;
+    }
+    else {
+        delete[] tmp.name;
+    }
     return file.good();
 }
 

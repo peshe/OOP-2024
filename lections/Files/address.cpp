@@ -121,6 +121,6 @@ bool printAddressToStream(const Address& address, ostream& output)
 bool writeToBinary(const Address& address, ofstream& output)
 {
     assert(output.good());
-    output.write((char*)&address, sizeof(address));
+    output.write((const char*)&address, sizeof(address));
     return output.good();
 }
