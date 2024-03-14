@@ -16,7 +16,7 @@ float calcDistance(const Point& p1,const Point& p2) {
 
 // Bubble sort written from your colleague
 // The only difference is since we want to "reuse the original" points, we will sort only the positions into a new array
-void sortPoints(const Point* const points ,size_t* positions, const int& numPoints, const Point& center) {
+void sortPoints(const Point* points, size_t* positions, int numPoints, const Point& center) {
     for (size_t i = 0; i < numPoints - 1; ++i) {
         for (size_t j = 0; j <numPoints - i - 1; ++j) {
             float distanceA = calcDistance(points[positions[j]], center);
@@ -31,7 +31,7 @@ void sortPoints(const Point* const points ,size_t* positions, const int& numPoin
 }
 
 // Replace the points outside the circle with the center point
-void pointsOutsideCircle(Point*& points,const size_t& numPoints, const Point& center, float radius ) {
+void pointsOutsideCircle(Point* points, size_t numPoints, const Point& center, float radius) {
     for (size_t i = 0; i < numPoints; i++)
     {
         float distance = calcDistance(points[i], center);
@@ -69,7 +69,7 @@ int main() {
     }
     const size_t numPoints = fileSize / sizeof(Point);
 	
-	// memory leak?
+    // memory leak?
     Point* points = new Point[numPoints];
     size_t* positions = new size_t[numPoints];
     for (size_t i = 0; i < numPoints; i++) {
@@ -119,7 +119,7 @@ int main() {
         return -1;
     }
 
-    ouBin.write(reinterpret_cast<char*>(points), fileSize );
+    ouBin.write(reinterpret_cast<char*>(points), fileSize);
     ouBin.close();
 
     // Read again the entire file, with the updated values
