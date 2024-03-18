@@ -7,6 +7,7 @@
  **/
 class Person
 {
+// Public methods
 public:
     // Default Constructor
     Person();
@@ -39,6 +40,7 @@ private:
     // @throws bad_alloc when there's not enough memory
     void copy(const Person& other);
 
+// Private fields
 private:
     // Dynamically allocated char array storing the person's name
     char* fName;

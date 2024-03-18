@@ -16,8 +16,9 @@ Person::Person(const Person& other)
     copy(other);
 }
 
-Person &Person::operator=(const Person& other)
+Person& Person::operator=(const Person& other)
 {
+    // Standard implementation for an assignment operator
     if (this != &other)
     {
         clear();
@@ -34,13 +35,17 @@ Person::~Person()
 
 bool Person::SetName(const char* name)
 {
+    // Nothing to do if we're given a nullptr
     if (name == nullptr)
         return false;
 
+    // Check if there's enough memory to hold the new name first
     char* tempName = new (std::nothrow) char[strlen(name) + 1];
     if (tempName == nullptr)
         return false;
 
+    // If we allocated enough memory for the new name
+    // then we can proceed to actually change the name
     delete[] fName;
     fName = tempName;
     strcpy(fName, name);

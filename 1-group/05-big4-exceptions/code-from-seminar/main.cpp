@@ -18,4 +18,4 @@ int main()
     std::cout << p2.GetName() << '\n';
 
     return 0;
-}
+} // Destructors are automatically called here
