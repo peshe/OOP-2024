@@ -58,7 +58,7 @@ public:
 	}
 
 	void setTitle(const char* newTitle) {
-		if (strcmp(newTitle, "") == 0) {
+		if (newTitle == nullptr || strcmp(newTitle, "") == 0) {
 			return;
 		}
 
@@ -70,7 +70,7 @@ public:
 	}
 
 	void setAuthor(const char* newAuthor) {
-		if (strcmp(newAuthor, "") == 0) {
+		if (newAuthor == nullptr || strcmp(newAuthor, "") == 0) {
 			return;
 		}
 
@@ -87,22 +87,44 @@ public:
 
 	void printBook() const
 	{
-		cout << title << endl;
-		cout << author << endl;
+		if (title != nullptr) {
+			cout << title << endl;
+		}
+		else {
+			cout << "No title set." << endl;
+		}
+
+		if (author != nullptr) {
+			cout << author << endl;
+		}
+		else {
+			cout << "No author set." << endl;
+		}
+
 		cout << publishYear << endl;
 	}
 };
 
-void initBook() {
+// Example usage of the Book class. Leaving bookExamples, calls destructors of all objects.
+void bookExamples() {
+	// 1. Parameterized constructor.
 	Book book = Book("Book title", "Book author", 2020);
+
+	// 2. Getters usage example.
 	cout << book.getAuthor() << endl << book.getTitle() << endl << book.getPublishYear() << endl;
 
+	// 3. Default constructor.
 	Book b;
+
+	// 4. Setter usage example.
 	b.setTitle("New title");
+
+	// 5. Method usage example.
+	b.printBook();
 }
 
 int main() {
-	initBook();
+	bookExamples();
 
 	return 0;
 }
