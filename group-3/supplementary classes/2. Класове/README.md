@@ -224,3 +224,71 @@ int main() {
 ### Задача 6: Отпечатване на Всички Книги
 - Имплементирайте метод `void printAllBooks() const`, който отпечатва информация за всички книги в списъка.
 
+---
+
+## Пример за оправление на изключения
+
+```c++
+#include <iostream>
+#include <cstring>
+#include "Book.hpp"
+#include "BookList.hpp"
+
+using std::cin;
+using std::cout;
+using std::cerr;
+using std::endl;
+
+int main() {
+    try {
+        Book book1("Effective C++", "Scott Meyers", 2005);
+        Book book2("Clean Code", "Robert C. Martin", 2008);
+        Book book3("Design Patterns", "Erich Gamma", 1994);
+
+        cout << "Created books:" << endl;
+        book1.printBook();
+        book2.printBook();
+        book3.printBook();
+
+        BookList list;
+        list.addBook(book1);
+        list.addBook(book2);
+        list.addBook(book3);
+
+        cout << "\nBooks in the list:" << endl;
+        list.printAllBooks();
+
+        // Пример за премахване на книга
+        if (list.removeBook("Effective C++")) {
+            cout << "\nAfter removing 'Effective C++':" << endl;
+            list.printAllBooks();
+        } else {
+            cerr << "Failed to remove 'Effective C++'." << endl;
+        }
+
+        // Пример за премахване на несъществуваща книга
+        if (!list.removeBook("Non-Existent Title")) {
+            cout << "\n'Non-Existent Title' not found in the list." << endl;
+        }
+
+         char* veryLongTitle = new char[100000000 + 1]; // Създаваме тестово заглавие с дължина 100000000 символа
+        std::memset(veryLongTitle, 'A', 100000000);
+        veryLongTitle[100000000] = '\0';
+
+        book.setTitle(veryLongTitle);
+        delete[] veryLongTitle;
+    }
+    catch (const std::bad_alloc& e) {
+        cerr << "Memory allocation failed: " << e.what() << endl;
+    }
+    catch (const std::exception& e) {
+        cerr << "An exception occurred: " << e.what() << endl;
+    }
+    catch (...) {
+        cerr << "An unknown exception occurred." << endl;
+    }
+
+    return 0;
+}
+
+```
