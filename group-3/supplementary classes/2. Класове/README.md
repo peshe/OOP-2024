@@ -271,9 +271,10 @@ int main() {
             cout << "\n'Non-Existent Title' not found in the list." << endl;
         }
 
-         char* veryLongTitle = new char[100000000 + 1]; // Създаваме тестово заглавие с дължина 100000000 символа
-        std::memset(veryLongTitle, 'A', 100000000);
-        veryLongTitle[100000000] = '\0';
+       	size_t size = static_cast<size_t>(-1); // 2^64 Max size_t value, likely far more than available.
+        char* veryLongTitle = new char[size + 1]; 
+        std::memset(veryLongTitle, 'A', size);
+        veryLongTitle[size] = '\0';
 
         book.setTitle(veryLongTitle);
         delete[] veryLongTitle;
