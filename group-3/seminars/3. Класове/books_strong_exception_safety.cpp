@@ -11,12 +11,24 @@ char* deepCopyString(const char* source) {
 		return nullptr;
 	}
 
-	size_t length = strlen(source) + 1;
-	char* destination = new char[length];
+	// 1. In case where allocation fails, return nullptr, is that okay?
+	try {
+		size_t length = strlen(source) + 1;
+		char* destination = new char[length];
 
-	strcpy_s(destination, length, source);
+		strcpy_s(destination, length, source);
 
-	return destination;
+		return destination;
+	}
+	catch (...) {
+		return nullptr;
+	}
+}
+
+// 2. Use "pass by reference", otherwise nullptr assigment is done to the copied parameter.
+void safeDeleteCharArray(char*& charArray) {
+	delete[] charArray;
+	charArray = nullptr;
 }
 
 class Book {
@@ -25,14 +37,9 @@ private:
 	char* author;
 	int publishYear;
 
-	void safeDeleteTitle() {
-		delete[] title;
-		title = nullptr;
-	}
-
-	void safeDeleteAuthor() {
-		delete[] author;
-		author = nullptr;
+	void clear() {
+		safeDeleteCharArray(this->title);
+		safeDeleteCharArray(this->author);
 	}
 
 public:
@@ -40,25 +47,20 @@ public:
 	{
 	}
 
-	Book(const char* title, const char* author, int publishYear) : title(nullptr), author(nullptr), publishYear(publishYear)
+	Book(const char* title, const char* author, int publishYear) : title(nullptr), author(nullptr)
 	{
-		try {
-			setTitle(title);
-			setAuthor(author);
-		}
-		catch (...) {
-			safeDeleteTitle();
+		// 3. For parameterized constructor include setPublishYear as it has validation?
+		if (!setTitle(title) || !setAuthor(author) || !setPublishYear(publishYear)) {
+			clear();
+			// 4. Throw to indicate allocation fail? Do I pass message? A generic one?
 			throw;
 		}
 	}
 
-	Book(const Book& other) : publishYear(other.publishYear) {
-		try {
-			setTitle(other.title);
-			setAuthor(other.author);
-		}
-		catch (...) {
-			safeDeleteTitle();
+	Book(const Book& other) {
+		// 5. For copy constructor, do I include setPublishYear? Since other is of type Book, any values to publishYear should be valid.
+		if (!setTitle(other.title) || !setAuthor(other.author) || !setPublishYear(other.publishYear)) {
+			clear();
 			throw;
 		}
 	}
@@ -71,23 +73,20 @@ public:
 		char* newTitle = nullptr;
 		char* newAuthor = nullptr;
 
-		try {
-			if (other.title) {
-				newTitle = deepCopyString(other.title);
-			}
+		newTitle = deepCopyString(other.title);
+		newAuthor = deepCopyString(other.author);
 
-			if (other.author) {
-				newAuthor = deepCopyString(other.author);
-			}
-		}
-		catch (...) {
-			delete[] newTitle;
-			delete[] newAuthor;
+		// 6. deepCopyString failed. Deallocate memory and throw.
+		// But other.title or other.author can be nullptr, in that case it has not failed?
+		// Do I check in pairs? if(!newTitle && other.title) and then safeDelete + throw?
+		if (!newTitle || !newAuthor) {
+			safeDeleteCharArray(newTitle);
+			safeDeleteCharArray(newAuthor);
+			
 			throw;
 		}
 
-		safeDeleteTitle();
-		safeDeleteAuthor();
+		clear();
 
 		this->title = newTitle;
 		this->author = newAuthor;
@@ -97,8 +96,7 @@ public:
 	}
 
 	~Book() {
-		safeDeleteTitle();
-		safeDeleteAuthor();
+		clear();
 	}
 
 	const char* getAuthor() const {
@@ -113,34 +111,51 @@ public:
 		return publishYear;
 	}
 
-	void setTitle(const char* newTitle) {
+	// Return bool if assigment was successful.
+	bool setTitle(const char* newTitle) {
 		if (newTitle == nullptr || strcmp(newTitle, "") == 0) {
-			return;
+			return false;
 		}
 
 		char* temporaryTitle = deepCopyString(newTitle);
-		safeDeleteTitle();
+		// 7. If temporaryTitle is nullptr, the deep copy failed, return false.
+		if (temporaryTitle == nullptr) {
+			return false;
+		}
 
+		safeDeleteCharArray(this->title);
 		title = temporaryTitle;
+
+		return true;
 	}
 
-	void setAuthor(const char* newAuthor) {
+	bool setAuthor(const char* newAuthor) {
 		if (newAuthor == nullptr || strcmp(newAuthor, "") == 0) {
-			return;
+			return false;
 		}
 
 		char* temporaryAuthor = deepCopyString(newAuthor);
-		safeDeleteAuthor();
+		if (temporaryAuthor == nullptr) {
+			return false;
+		}
 
+		safeDeleteCharArray(this->author);
 		author = temporaryAuthor;
+
+		return true;
 	}
 
-	void setPublishYear(int newPublishYear) {
-		if (newPublishYear < 0 || newPublishYear > 2050) {
-			return;
+	bool setPublishYear(int newPublishYear) {
+		// 8. Add method-scoped constants as currently they're not used anywhere else. If they were, make them class-level constants.
+		const int MIN_PUBLISH_YEAR = 0;
+		const int MAX_PUBLISH_YEAR = 2050;
+		if (newPublishYear < MIN_PUBLISH_YEAR || newPublishYear > MAX_PUBLISH_YEAR) {
+			return false;
 		}
 
 		this->publishYear = newPublishYear;
+
+		return true;
 	}
 
 	void printBook() const
@@ -165,25 +180,21 @@ public:
 
 int main() {
 	try {
-		// 1. Attempt to construct a Book object with the parameterized constructor.
 		Book book("Book title", "Book author", 2020);
 
-		// 2. Getters usage example.
 		cout << book.getAuthor() << endl << book.getTitle() << endl << book.getPublishYear() << endl;
 
-		// 3. Default constructor and setter usage.
 		Book b;
 		b.setTitle("New title");
 
-		// 4. Method usage example.
 		b.printBook();
+
+		b = book;
 	}
 	catch (const std::exception& e) {
-		// Handle standard exceptions
 		cout << "An exception occurred: " << e.what() << endl;
 	}
 	catch (...) {
-		// Handle all other exceptions
 		cout << "An unknown exception occurred." << endl;
 	}
 
