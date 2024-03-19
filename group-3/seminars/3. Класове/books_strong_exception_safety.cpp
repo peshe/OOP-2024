@@ -24,11 +24,6 @@ char* deepCopyString(const char* source) {
 	return destination;
 }
 
-void safeDeleteCharArray(char*& charArray) {
-	delete[] charArray;
-	charArray = nullptr;
-}
-
 class Book {
 private:
 	char* title;
@@ -36,8 +31,8 @@ private:
 	int publishYear;
 
 	void clear() {
-		safeDeleteCharArray(this->title);
-		safeDeleteCharArray(this->author);
+		delete[] this->title;
+		delete[] this->author;
 	}
 
 public:
@@ -49,7 +44,7 @@ public:
 			setTitle("No title set.");
 			setAuthor("No author set.");
 		}
-		catch (std::bad_alloc& e) {
+		catch (const std::bad_alloc& e) {
 			clear();
 			throw;
 		}
@@ -65,7 +60,7 @@ public:
 			// Or this doesn't matter as the object we're trying to create is destroyed as it's invalid.
 			setPublishYear(publishYear);
 		}
-		catch (std::bad_alloc& e) {
+		catch (const std::bad_alloc& e) {
 			clear();
 			throw;
 		}
@@ -79,7 +74,7 @@ public:
 			// 4. Move the setting of publish year last, removed from init list as if allocation operations fail, we don't want partial update.
 			setPublishYear(other.publishYear);
 		}
-		catch (std::bad_alloc& e) {
+		catch (const std::bad_alloc& e) {
 			clear();
 			throw;
 		}
@@ -95,8 +90,8 @@ public:
 
 		// 5. Valid code title and author now cannot be nullptr, there's no constructor that allows it.
 		if (!newTitle || !newAuthor) {
-			safeDeleteCharArray(newTitle);
-			safeDeleteCharArray(newAuthor);
+			delete[] newTitle;
+			delete[] newAuthor;
 
 			throw std::bad_alloc();
 		}
@@ -138,7 +133,7 @@ public:
 			throw std::bad_alloc();
 		}
 
-		safeDeleteCharArray(this->title);
+		delete[] this->title;
 		title = temporaryTitle;
 	}
 
@@ -152,7 +147,7 @@ public:
 			throw std::bad_alloc();
 		}
 
-		safeDeleteCharArray(this->author);
+		delete[] this->author;
 		author = temporaryAuthor;
 	}
 
