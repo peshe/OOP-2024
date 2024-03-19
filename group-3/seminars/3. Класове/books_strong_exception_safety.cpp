@@ -4,6 +4,7 @@
 
 using std::cin;
 using std::cout;
+using std::cerr;
 using std::endl;
 
 char* deepCopyString(const char* source) {
@@ -11,21 +12,18 @@ char* deepCopyString(const char* source) {
 		return nullptr;
 	}
 
-	// 1. In case where allocation fails, return nullptr, is that okay?
-	try {
-		size_t length = strlen(source) + 1;
-		char* destination = new char[length];
-
-		strcpy_s(destination, length, source);
-
-		return destination;
-	}
-	catch (...) {
+	// 1. Update: use nothrow and return nullptr if allocation fails.
+	size_t length = strlen(source) + 1;
+	char* destination = new(std::nothrow) char[length];
+	if (!destination) {
 		return nullptr;
 	}
+
+	strcpy_s(destination, length, source);
+
+	return destination;
 }
 
-// 2. Use "pass by reference", otherwise nullptr assigment is done to the copied parameter.
 void safeDeleteCharArray(char*& charArray) {
 	delete[] charArray;
 	charArray = nullptr;
@@ -45,21 +43,43 @@ private:
 public:
 	Book() : title(nullptr), author(nullptr), publishYear(0)
 	{
+		// 2. nullptr is now invalid value for the fields of my book class, including the default constructor.
+		// By default set the following values below. Throw from setters and clear in construction situations.
+		try {
+			setTitle("No title set.");
+			setAuthor("No author set.");
+		}
+		catch (std::bad_alloc& e) {
+			clear();
+			throw;
+		}
 	}
 
-	Book(const char* title, const char* author, int publishYear) : title(nullptr), author(nullptr)
+	Book(const char* title, const char* author, int publishYear) : title(nullptr), author(nullptr), publishYear(0)
 	{
-		// 3. For parameterized constructor include setPublishYear as it has validation?
-		if (!setTitle(title) || !setAuthor(author) || !setPublishYear(publishYear)) {
+		try {
+			setTitle(title);
+			setAuthor(author);
+
+			// 3. As the previous operations might fail, isn't it better to initialize publishYear to 0 using initializer list in the constructor?
+			// Or this doesn't matter as the object we're trying to create is destroyed as it's invalid.
+			setPublishYear(publishYear);
+		}
+		catch (std::bad_alloc& e) {
 			clear();
-			// 4. Throw to indicate allocation fail? Do I pass message? A generic one?
 			throw;
 		}
 	}
 
 	Book(const Book& other) {
-		// 5. For copy constructor, do I include setPublishYear? Since other is of type Book, any values to publishYear should be valid.
-		if (!setTitle(other.title) || !setAuthor(other.author) || !setPublishYear(other.publishYear)) {
+		try {
+			setTitle(other.title);
+			setAuthor(other.author);
+
+			// 4. Move the setting of publish year last, removed from init list as if allocation operations fail, we don't want partial update.
+			setPublishYear(other.publishYear);
+		}
+		catch (std::bad_alloc& e) {
 			clear();
 			throw;
 		}
@@ -70,20 +90,15 @@ public:
 			return *this;
 		}
 
-		char* newTitle = nullptr;
-		char* newAuthor = nullptr;
+		char* newTitle = deepCopyString(other.title);
+		char* newAuthor = deepCopyString(other.author);
 
-		newTitle = deepCopyString(other.title);
-		newAuthor = deepCopyString(other.author);
-
-		// 6. deepCopyString failed. Deallocate memory and throw.
-		// But other.title or other.author can be nullptr, in that case it has not failed?
-		// Do I check in pairs? if(!newTitle && other.title) and then safeDelete + throw?
+		// 5. Valid code title and author now cannot be nullptr, there's no constructor that allows it.
 		if (!newTitle || !newAuthor) {
 			safeDeleteCharArray(newTitle);
 			safeDeleteCharArray(newAuthor);
-			
-			throw;
+
+			throw std::bad_alloc();
 		}
 
 		clear();
@@ -111,51 +126,44 @@ public:
 		return publishYear;
 	}
 
-	// Return bool if assigment was successful.
-	bool setTitle(const char* newTitle) {
+	void setTitle(const char* newTitle) {
 		if (newTitle == nullptr || strcmp(newTitle, "") == 0) {
-			return false;
+			// 6. Update: throw invalid argument exception for all validation related errors.
+			throw std::invalid_argument("Title cannot be null or empty.");
 		}
 
 		char* temporaryTitle = deepCopyString(newTitle);
-		// 7. If temporaryTitle is nullptr, the deep copy failed, return false.
 		if (temporaryTitle == nullptr) {
-			return false;
+			// 7. Update: throw bad_alloc exception for all allocation fails.
+			throw std::bad_alloc();
 		}
 
 		safeDeleteCharArray(this->title);
 		title = temporaryTitle;
-
-		return true;
 	}
 
-	bool setAuthor(const char* newAuthor) {
+	void setAuthor(const char* newAuthor) {
 		if (newAuthor == nullptr || strcmp(newAuthor, "") == 0) {
-			return false;
+			throw std::invalid_argument("Author cannot be null or empty.");
 		}
 
 		char* temporaryAuthor = deepCopyString(newAuthor);
 		if (temporaryAuthor == nullptr) {
-			return false;
+			throw std::bad_alloc();
 		}
 
 		safeDeleteCharArray(this->author);
 		author = temporaryAuthor;
-
-		return true;
 	}
 
-	bool setPublishYear(int newPublishYear) {
-		// 8. Add method-scoped constants as currently they're not used anywhere else. If they were, make them class-level constants.
+	void setPublishYear(int newPublishYear) {
 		const int MIN_PUBLISH_YEAR = 0;
 		const int MAX_PUBLISH_YEAR = 2050;
 		if (newPublishYear < MIN_PUBLISH_YEAR || newPublishYear > MAX_PUBLISH_YEAR) {
-			return false;
+			throw std::invalid_argument("Publish year should be between 0 and 2050");
 		}
 
 		this->publishYear = newPublishYear;
-
-		return true;
 	}
 
 	void printBook() const
@@ -191,11 +199,20 @@ int main() {
 
 		b = book;
 	}
+	// 7. Handle invalid arguments exceptions.
+	catch (const std::invalid_argument& e) {
+		cerr << "Invalid argument. " << e.what() << endl;
+	}
+	// 8. Handle bad allocation exceptions.
+	catch (const std::bad_alloc& e) {
+		cerr << "Dynamic memory allocation failed. " << e.what() << endl;
+	}
+	// 9. Handle generic exceptions.
 	catch (const std::exception& e) {
-		cout << "An exception occurred: " << e.what() << endl;
+		cerr << "An exception occurred: " << e.what() << endl;
 	}
 	catch (...) {
-		cout << "An unknown exception occurred." << endl;
+		cerr << "An unknown exception occurred." << endl;
 	}
 
 	return 0;
