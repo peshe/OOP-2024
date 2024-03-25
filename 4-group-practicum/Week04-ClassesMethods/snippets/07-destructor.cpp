@@ -9,9 +9,10 @@ private:
     char* subject;
     
 public:
-    void initialize(const char* name, const char* subject)
+    Teacher(const char* name, const char* subject)
+        : name(nullptr), subject(nullptr)
     {
-        std::cout << "Inside initialize" << std::endl;
+        std::cout << "Inside constuctor" << std::endl;
 
         this->setName(name);
 
@@ -28,6 +29,8 @@ public:
             return;
         }
     }
+
+    Teacher() : name(nullptr), subject(nullptr) {}
 
     void setName(const char* name) 
     {
@@ -72,9 +75,9 @@ public:
         std::cout << "My name is " << this->name << " and I am teaching " << this->subject << "." << std::endl;
     }
 
-	void cleanUp()
+    ~Teacher()
     {
-        std::cout << "Inside cleanUp" << std::endl;
+        std::cout << "Inside destuctor" << std::endl;
 
         delete[] this->name;
         delete[] this->subject;
@@ -83,8 +86,7 @@ public:
 
 int main ()
 {
-    Teacher teacher;
-	teacher.initialize("Borislav Draganov", "DIS2");
+    Teacher teacher("Borislav Draganov", "DIS2");
     if (!teacher.getName())
     {
         return 1;
@@ -92,14 +94,13 @@ int main ()
 
     teacher.print();
 
-    Teacher* dynamicallyAllocatedTeacher = new (std::nothrow) Teacher;
+    Teacher* dynamicallyAllocatedTeacher = new (std::nothrow) Teacher("Bogdan Alexandrov", "Geometry");
     if (!dynamicallyAllocatedTeacher)
     {
         std::cout << "Memory problem!" << std::endl;
         return 1;
     }
 
-	dynamicallyAllocatedTeacher->initialize("Bogdan Alexandrov", "Geometry");
     if (!dynamicallyAllocatedTeacher->getName())
     {
         delete dynamicallyAllocatedTeacher;
@@ -108,9 +109,6 @@ int main ()
 
     dynamicallyAllocatedTeacher->print();
 
-	dynamicallyAllocatedTeacher->cleanUp();
     delete dynamicallyAllocatedTeacher;
-	
-	teacher.cleanUp();
     return 0;
 }
