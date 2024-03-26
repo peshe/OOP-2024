@@ -1,0 +1,26 @@
+4 3 4
+Purple
+15
+Blue
+10
+Green
+7
+Red
+5
+Tangers
+Chocolate Ice Cream
+26
+Dark Side
+Grape
+20
+Ososuma
+Peach
+14
+Jack Daniels
+40
+Red Johnny Walker
+35
+Jim Beam
+30
+Absolute
+25
