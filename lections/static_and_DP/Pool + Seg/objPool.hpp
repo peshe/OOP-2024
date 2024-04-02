@@ -18,11 +18,6 @@ namespace fmi::oop {
 // Предоставя определен брой обекти от Worker, създадени при първа нужда.
 class ObjectPool
 {
-
-public:
-    // Максимален брой работници
-    static const unsigned maxWorkers = 5;
-
 public:
     // Връща единствената инстанция на клас
     static ObjectPool& getPool();
@@ -33,6 +28,10 @@ public:
 
     // Освобождава нает работник.
     void dismissWorker(Worker& w);
+
+public:
+    // Максимален брой работници
+    static const unsigned maxWorkers = 5;
 
 private:
     ObjectPool(unsigned numWorkers);
