@@ -34,7 +34,6 @@ Car::Trunk ReadTrunkType(std::istream &is){
 
 Car::Car(std::istream &is): trunkType(ReadTrunkType(is)), date(ReadDate(is)){
 
-    
     size_t const BUFFER_SIZE = 1024;
     char buffer[BUFFER_SIZE];
 
@@ -44,7 +43,9 @@ Car::Car(std::istream &is): trunkType(ReadTrunkType(is)), date(ReadDate(is)){
     strcpy(brand, buffer);
 
     is >> horsePower;
+    if(!horsePower || horsePower > 3000) throw std::ios_base::failure("Value read from the stream was invalid");
     is >> seats;
+    if(!seats || seats > 4) throw std::ios_base::failure("Value read from the stream was invalid");
     totalHorsePower += horsePower;
 
 }
@@ -113,6 +114,32 @@ Date Car::GetDate() const{
     return date;
 }
 
+void Car::SetBrand(char const *brand){
+
+    if(!brand) return;
+
+    delete[] this -> brand;
+
+    this -> brand = new char[strlen(brand) + 1];
+    strcpy(this -> brand, brand);
+
+}
+
+void Car::SetDate(char const *date){
+    this -> date = Date(date);
+}
+
+void Car::SetDate(Date date){
+    this -> date = date;
+}
+
+void Car::SetHorsePower(uint16_t horsePower){
+
+    totalHorsePower -= this -> horsePower - horsePower;
+    this -> horsePower = horsePower;
+
+}
+
 uint64_t Car::GetTotalHorsePower(){
     return totalHorsePower;
 }
@@ -131,9 +158,8 @@ void Car::copy(Car const &other){
 void Car::move(Car &&other){
 
     brand = std::exchange(other.brand, nullptr);
-    date = std::exchange(other.date, Date());
-    horsePower = std::exchange(other.horsePower, 0);
-    seats = std::exchange(other.seats, 0);
+    horsePower = other.horsePower;
+    seats = other.seats;
     totalHorsePower += other.horsePower;
 
 }

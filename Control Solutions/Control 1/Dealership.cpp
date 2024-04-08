@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Dealership.hpp"
 
-double const Dealership::NAN = -1.0;
+double const Dealership::INVALID_PRICE = -1.0;
 
 Dealership::Dealership(size_t const capacity){
     cars = new Pair[capacity];
@@ -46,28 +46,30 @@ Dealership &Dealership::operator =(Dealership &&other) noexcept{
 
 }
 
-void Dealership::Add(Car const &car, double const price){
+size_t Dealership::Add(Car const &car, double const price){
 
     if(price < 0.0) throw std::invalid_argument("Price should not be negative");
 
     for(size_t i = 0; i < capacity; ++i)
-        if(cars[i].price == NAN){
+        if(cars[i].price == INVALID_PRICE){
 
             cars[i] = Pair{car, price};
-            return;
+            return i;
 
         }
+
+    return SIZE_MAX;
 
 }
 
 Car Dealership::Sell(size_t const index){
 
     if(index >= capacity) throw std::out_of_range("Index out of range");
-    if(cars[index].price == NAN) throw std::domain_error("Parking spot is empty");
+    if(cars[index].price == INVALID_PRICE) throw std::domain_error("Parking spot is empty");
 
     ++totalSoldCars;
     totalEarnings += cars[index].price;
-    cars[index].price = NAN;
+    cars[index].price = INVALID_PRICE;
 
     return cars[index].car;
 
@@ -76,7 +78,7 @@ Car Dealership::Sell(size_t const index){
 void Dealership::SetPrice(size_t const index, double const price){
 
     if(index >= capacity) throw std::out_of_range("Index out of range");
-    if(cars[index].price == NAN) throw std::domain_error("Parking spot is empty");
+    if(cars[index].price == INVALID_PRICE) throw std::domain_error("Parking spot is empty");
     if(price < 0.0) throw std::invalid_argument("Price should not be negative");
 
     cars[index].price = price;
@@ -90,7 +92,7 @@ void Dealership::SaveData(const char *fileName) const{
     if(!ofs.is_open()) throw std::ios_base::failure("Couldn't open file");
 
     for(size_t i = 0; i < capacity; ++i)
-        if(cars[i].price != NAN)
+        if(cars[i].price != INVALID_PRICE)
             cars[i].car.Print(ofs);
 
     ofs.close();
@@ -100,7 +102,7 @@ void Dealership::SaveData(const char *fileName) const{
 void Dealership::PrintData(char const *brand) const{
 
     for(size_t i = 0; i < capacity; ++i)
-        if(cars[i].price != NAN && !strcmp(cars[i].car.GetBrand(), brand))
+        if(cars[i].price != INVALID_PRICE && !strcmp(cars[i].car.GetBrand(), brand))
             cars[i].car.Print(std::cout);
 
 }
@@ -108,7 +110,7 @@ void Dealership::PrintData(char const *brand) const{
 void Dealership::PrintData(double const price) const{
 
     for(size_t i = 0; i < capacity; ++i)
-        if(cars[i].price != NAN && cars[i].price <= price)
+        if(cars[i].price != INVALID_PRICE && cars[i].price <= price)
             cars[i].car.Print(std::cout);
 
 }
@@ -116,7 +118,7 @@ void Dealership::PrintData(double const price) const{
 void Dealership::PrintData(uint32_t const year) const{
 
     for(size_t i = 0; i < capacity; ++i)
-        if(cars[i].price != NAN && cars[i].car.GetDate().GetYear() > year)
+        if(cars[i].price != INVALID_PRICE && cars[i].car.GetDate().GetYear() > year)
             cars[i].car.Print(std::cout);
 
 }
@@ -138,10 +140,10 @@ void Dealership::copy(Dealership const &other){
 
 void Dealership::move(Dealership &&other){
 
-    capacity = std::exchange(other.capacity, 0);
+    capacity = other.capacity;
     cars = std::exchange(other.cars, nullptr);
-    totalSoldCars = std::exchange(other.totalSoldCars, 0);
-    totalEarnings = std::exchange(other.totalEarnings, 0.f);
+    totalSoldCars = other.totalSoldCars;
+    totalEarnings = other.totalEarnings;
 
 }
 

@@ -18,10 +18,16 @@ public:
     uint32_t GetMonth() const;
     uint32_t GetDay() const;
 
+    void SetDay(uint32_t day);
+    void SetMonth(uint32_t month);
+    void SetYear(uint32_t year);
+
 private:
     // year - 6bits -> 63, month - 4bits -> 15, day - 5bits -> 31
     // Total: 15/16bits used.
     uint16_t time = 0;
+
+    static uint16_t const DAYS_IN_MONTHS[12];
 
 };
 

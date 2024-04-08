@@ -17,7 +17,7 @@ public:
     Car(std::istream &is);
     Car(Car const &other);
     Car(Car &&other) noexcept;
-    ~Car();
+    ~Car() noexcept;
 
     Car &operator =(Car const &other);
     Car &operator =(Car &&other) noexcept;
@@ -25,6 +25,11 @@ public:
     void Print(std::ostream &os) const;
     char const *GetBrand() const;
     Date GetDate() const;
+
+    void SetBrand(char const *brand);
+    void SetDate(char const *date);
+    void SetDate(Date date);
+    void SetHorsePower(uint16_t horsePower);
 
     static uint64_t GetTotalHorsePower();
 

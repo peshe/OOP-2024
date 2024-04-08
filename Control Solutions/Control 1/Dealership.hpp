@@ -20,12 +20,12 @@ public:
     Dealership(size_t const capacity);
     Dealership(Dealership const &other);
     Dealership(Dealership &&other) noexcept;
-    ~Dealership();
+    ~Dealership() noexcept;
 
     Dealership &operator =(Dealership const &other);
     Dealership &operator =(Dealership &&other) noexcept;
 
-    void Add(Car const &car, double const price);
+    size_t Add(Car const &car, double const price);
     Car Sell(size_t const index);
     void SetPrice(size_t const index, double const price);
 
@@ -41,11 +41,11 @@ private:
     void move(Dealership &&other);
     void free();
 
-    static double const NAN;
+    static double const INVALID_PRICE;
 
     struct Pair{
         Car car;
-        double price = NAN;
+        double price = INVALID_PRICE;
     };
 
     Pair *cars = nullptr;
