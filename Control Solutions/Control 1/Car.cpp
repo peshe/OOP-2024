@@ -45,7 +45,8 @@ Car::Car(std::istream &is): trunkType(ReadTrunkType(is)), date(ReadDate(is)){
     is >> horsePower;
     if(!horsePower || horsePower > 3000) throw std::ios_base::failure("Value read from the stream was invalid");
     is >> seats;
-    if(!seats || seats > 4) throw std::ios_base::failure("Value read from the stream was invalid");
+    if(!seats || seats > 12) throw std::ios_base::failure("Value read from the stream was invalid");
+    if(is.fail() || is.bad()) throw std::ios_base::failure("Error while reading values from the stream");
     totalHorsePower += horsePower;
 
 }
@@ -66,8 +67,7 @@ Car &Car::operator =(Car const &other){
 
     if(this == &other) return *this;
 
-    free();
-    copy(other);
+    *this = Car(other);
 
     return *this;
 
@@ -118,9 +118,10 @@ void Car::SetBrand(char const *brand){
 
     if(!brand) return;
 
-    delete[] this -> brand;
+    char *temp = new char[strlen(brand) + 1];
 
-    this -> brand = new char[strlen(brand) + 1];
+    delete[] this -> brand;
+    this -> brand = temp;
     strcpy(this -> brand, brand);
 
 }
@@ -135,6 +136,7 @@ void Car::SetDate(Date date){
 
 void Car::SetHorsePower(uint16_t horsePower){
 
+    if(!horsePower || horsePower > 3000) throw std::invalid_argument("Invalid value");
     totalHorsePower -= this -> horsePower - horsePower;
     this -> horsePower = horsePower;
 
