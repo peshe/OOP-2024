@@ -59,7 +59,7 @@ namespace fmi::oop {
     {
         AutoLog;
 
-        if (this != &rhs){          // Задължителна проверка за самоприсвояване
+        if (this != &rhs) {          // Задължителна проверка за самоприсвояване
             // Copy & Swap реализация
             Vector tmp = rhs;
             *this = std::move(tmp);
@@ -75,14 +75,14 @@ namespace fmi::oop {
     {
         AutoLog;
 
-        if (this != &rhs){           // Задължителна проверка за самоприсвояване
+        if (this != &rhs) {           // Задължителна проверка за самоприсвояване
             move(rhs.data, rhs.len);
         }
 
         return *this;
     }
 
-    Vector& Vector::operator+= (double value)
+    Vector& Vector::operator+=(double value)
     {
         AutoLog;
         // Този оператор съдържа същинската логика за събирането
@@ -142,14 +142,14 @@ namespace fmi::oop {
         return res;
     }
 
-    Vector operator* (double mul, const Vector& v)
+    Vector operator*(double mul, const Vector& v)
     {
         AutoLog;
         // При лявото умножение може да се обърнем към лявото, поради комутативността
         return v*mul;
     }
 
-    double operator* (const Vector& v1, const Vector& v2)
+    double operator*(const Vector& v1, const Vector& v2)
     {
         if (v1.length() != v2.length()) {
             return NAN;
@@ -285,13 +285,13 @@ namespace fmi::oop {
         return true;
     }
 
-    bool Vector::operator!= (const Vector& v2) const
+    bool Vector::operator!=(const Vector& v2) const
     {
         return !(*this == v2);
     }
 
 
-    ostream& operator << (ostream& out, const Vector& v)
+    ostream& operator<<(ostream& out, const Vector& v)
     {
         AutoLog;
 
@@ -303,7 +303,7 @@ namespace fmi::oop {
         return out;
     }
 
-    istream& operator >> (istream& in, Vector& v)
+    istream& operator>>(istream& in, Vector& v)
     {
         AutoLog;
 
@@ -342,7 +342,6 @@ namespace fmi::oop {
         size = 0;
     }
 
-
     void Vector::extend(int cnt)
     {
         assert(cnt + (int)len >= 0);
@@ -361,22 +360,22 @@ namespace fmi::oop {
 
     // При тези оператори забелeжете как логиката е само в <
     // Всички останали я използват благодарение на свойствата на пълната наредба. (Учете ДС!)
-    bool operator < (const Vector& v1, const Vector& v2)
+    bool operator<(const Vector& v1, const Vector& v2)
     {
         return v1() < v2();
     }
 
-    bool operator <= (const Vector& v1, const Vector& v2)
+    bool operator<=(const Vector& v1, const Vector& v2)
     {
         return !(v1 > v2);
     }
 
-    bool operator > (const Vector& v1, const Vector& v2)
+    bool operator>(const Vector& v1, const Vector& v2)
     {
         return v2 < v1;
     }
 
-    bool operator >= (const Vector& v1, const Vector& v2)
+    bool operator>=(const Vector& v1, const Vector& v2)
     {
         return !(v1 < v2);
     }
