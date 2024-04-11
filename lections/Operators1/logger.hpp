@@ -39,5 +39,3 @@ protected:
 #endif //defined(_DEBUG) || defined(LOG_ENABLED)
 
 #endif //__LOGER_HEADER_INCLUDED_
-
-

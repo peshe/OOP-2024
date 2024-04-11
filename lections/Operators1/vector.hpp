@@ -20,8 +20,8 @@ namespace fmi::oop {
     class Vector
     {
         // Оператори за вход и изход - най-честият пример за приятелски оператори
-        friend ostream& operator << (ostream& out, const Vector& v);
-        friend istream& operator >> (istream& in, Vector& v);
+        friend ostream& operator<<(ostream& out, const Vector& v);
+        friend istream& operator>>(istream& in, Vector& v);
 
     public:
         //////////////
@@ -46,7 +46,7 @@ namespace fmi::oop {
 
         Vector& operator+= (const Vector& v);   // Конкатенира два вектора V += V
 
-        // Покомпонентно умноже с число
+        // Покомпонентно умножение с число
         Vector  operator* (double d) const;
         Vector& operator*= (double d);
 
@@ -94,18 +94,18 @@ namespace fmi::oop {
 
     // Външни операторни функции
 
-    Vector operator + (const Vector& v1, const Vector& v2); // Конкатенация V+V
-    Vector operator * (double mul, const Vector& v);        // Ляво умножение: d*V
+    Vector operator+ (const Vector& v1, const Vector& v2); // Конкатенация V+V
+    Vector operator* (double mul, const Vector& v);        // Ляво умножение: d*V
+    Vector operator/ (const Vector& v, double mul);
 
     double operator* (const Vector& v1, const Vector& v2);  // Скаларно произведение
-    Vector operator/(const Vector& v, double mul);
 
     // Серия оператори за наредба - векторите се сравняват по норма.
     // Наредбата е пълна.
-    bool operator <  (const Vector& v1, const Vector& v2);
-    bool operator <= (const Vector& v1, const Vector& v2);
-    bool operator >  (const Vector& v1, const Vector& v2);
-    bool operator >= (const Vector& v1, const Vector& v2);
+    bool operator<  (const Vector& v1, const Vector& v2);
+    bool operator<= (const Vector& v1, const Vector& v2);
+    bool operator>  (const Vector& v1, const Vector& v2);
+    bool operator>= (const Vector& v1, const Vector& v2);
 
 } // fmi::oop
 
