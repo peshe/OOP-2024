@@ -43,11 +43,11 @@ int main() {
   }
   catch (const std::exception& e) {
     std::cout << e.what() << '\n';
-	return 1;
+    return 1;
   }
   catch (const char* msg) {
     std::cout << msg << '\n';
-	return 1;
+    return 1;
   }
   
   return 0;
