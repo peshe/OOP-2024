@@ -10,10 +10,13 @@ public:
   );
 
   Computer(const Computer&);
-  ~Computer();
+  ~Computer() noexcept;
 
   static Computer loadFromText(std::istream&);
-  void saveAsText(std::ostream&);
+  void saveAsText(std::ostream&) const;
+
+  static Computer loadFromBinary(std::istream&);
+  void saveAsBinary(std::ostream&) const;
 
   const char* getBrand()      const { return brand; }
   const char* getProcessor()  const { return processor; }
@@ -26,7 +29,7 @@ public:
 
 private:
   Computer& operator= (const Computer&) = delete;
-  void freeMemory();
+  void freeMemory() noexcept;
 
 private:
   static unsigned nComputers;
