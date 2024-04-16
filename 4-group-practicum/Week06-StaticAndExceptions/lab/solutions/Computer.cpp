@@ -10,7 +10,8 @@
 static constexpr std::size_t BUFFER_SIZE = 10000u;
 /*static*/ unsigned Computer::nComputers = 0;
 
-static const char* copyString(const char* str) {
+static const char* copyString(const char* str)
+{
   if (str == nullptr) {
     return nullptr;
   }
@@ -37,7 +38,7 @@ Computer::Computer(
   }
 }
 
-Computer::Computer(const Computer &other) :
+Computer::Computer(const Computer& other) :
   Computer(
     other.brand, other.processor, other.video, other.hdd, other.weight,
     other.batteryLife, other.price, other.quantity
