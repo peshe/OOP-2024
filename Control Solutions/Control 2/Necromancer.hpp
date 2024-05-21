@@ -10,12 +10,12 @@ public:
     Necromancer(char const *name, Weapon weapon, unsigned attackDamage, char const *ability, double healthReductionCoefficient, Point spawnPosition = { 0, 0 });
 
 public:
-    void Attack(Player * const enemy) override final;
-    void Move(Point position) override final;
-    void Print() const override final;
+    void Attack(Player * const enemy) override;
+    void Move(Point position) override;
+    void Print() const override;
 
 public:
-    Player *Clone() const override final;
+    Player *Clone() const override;
 
 private:
     PlayerCollection m_KilledPlayers;

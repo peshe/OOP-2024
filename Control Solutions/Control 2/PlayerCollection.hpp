@@ -29,7 +29,7 @@ private:
     void Resize();
     void Copy(PlayerCollection const &other);
     void Move(PlayerCollection &&other);
-    void Free();
+    void Free(size_t size);
 
 private:
     size_t m_Size = 0, m_Capacity = 0;

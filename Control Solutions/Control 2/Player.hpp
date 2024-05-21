@@ -50,7 +50,7 @@ protected:
 
 private:
     void Copy(Player const &other);
-    void Move(Player &&other);
+    void MoveObject(Player &&other);
     void Free();
 
 private:

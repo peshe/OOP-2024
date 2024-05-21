@@ -23,12 +23,12 @@ void Necromancer::Attack(Player * const enemy){
         Mage::Attack(enemy);
         if(m_KilledPlayers.Size()) m_KilledPlayers.At(rand() % m_KilledPlayers.Size()) -> Attack(enemy);
 
-    }
+        if(!enemy -> GetHealth()){
+            
+            m_KilledPlayers.AddPlayer(enemy);
+            m_KilledPlayers.At(m_KilledPlayers.Size() - 1) -> Move(GetPosition());
 
-    if(!enemy -> GetHealth()){
-        
-        m_KilledPlayers.AddPlayer(enemy);
-        m_KilledPlayers.At(m_KilledPlayers.Size() - 1) -> Move(GetPosition());
+        }
 
     }
 

@@ -16,7 +16,7 @@ PlayerCollection::PlayerCollection(PlayerCollection &&other){
 }
 
 PlayerCollection::~PlayerCollection(){
-    Free();
+    Free(m_Size);
 }
 
 PlayerCollection &PlayerCollection::operator =(PlayerCollection const &other){
@@ -33,7 +33,7 @@ PlayerCollection &PlayerCollection::operator =(PlayerCollection &&other){
 
     if(this == &other) return *this;
 
-    Free();
+    Free(m_Size);
     Move(std::move(other));
 
     return *this;    
@@ -97,7 +97,7 @@ void PlayerCollection::Resize(){
     Player **temp = new Player *[m_Capacity *= 2];
     for(size_t i = 0; i < m_Size; ++i)
         temp[i] = m_Data[i];
-    Free();
+    Free(m_Size);
     m_Data = temp;
 
 }
@@ -108,7 +108,13 @@ void PlayerCollection::Copy(PlayerCollection const &other){
     m_Capacity = other.m_Capacity;
     m_Size = other.m_Size;
     for(size_t i = 0; i < other.m_Size; ++i)
-        m_Data[i] = other.m_Data[i];
+        try{ m_Data[i] = other.m_Data[i] -> Clone(); }
+        catch(std::bad_alloc &ex){
+
+            Free(i);
+            throw ex;
+
+        }
 
 }
 
@@ -120,6 +126,10 @@ void PlayerCollection::Move(PlayerCollection &&other){
 
 }
 
-void PlayerCollection::Free(){
-    delete m_Data;
+void PlayerCollection::Free(size_t size){
+
+    for(size_t i = 0; i < size; ++i)
+        delete m_Data[i];
+    delete[] m_Data;
+
 }
