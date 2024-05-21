@@ -22,7 +22,7 @@ Mage::Mage(Mage const &other): Player(other){
 }
 
 Mage::Mage(Mage &&other): Player(std::move(other)){
-    Move(std::move(other));
+    MoveObject(std::move(other));
 }
 
 Mage::~Mage(){
@@ -43,9 +43,9 @@ Mage &Mage::operator =(Mage &&other){
 
     if(this == &other) return *this;
 
-    Player::operator =(other);
+    Player::operator =(std::move(other));
     Free();
-    Move(std::move(other));
+    MoveObject(std::move(other));
 
     return *this;
 
@@ -88,7 +88,7 @@ void Mage::Copy(Mage const &other){
 
 }
 
-void Mage::Move(Mage &&other){
+void Mage::MoveObject(Mage &&other){
 
     m_Ability = std::exchange(other.m_Ability, nullptr);
     m_HealthReductionCoefficient = other.m_HealthReductionCoefficient;
@@ -96,5 +96,5 @@ void Mage::Move(Mage &&other){
 }
 
 void Mage::Free(){
-    delete m_Ability;
+    delete[] m_Ability;
 }

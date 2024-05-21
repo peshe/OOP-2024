@@ -26,7 +26,7 @@ Player::Player(Player const &other){
 }
 
 Player::Player(Player &&other){
-    Move(std::move(other));
+    MoveObject(std::move(other));
 }
 
 Player::~Player(){
@@ -51,7 +51,7 @@ Player &Player::operator =(Player &&other){
     if(this == &other) return *this;
 
     Free();
-    Move(std::move(other));
+    MoveObject(std::move(other));
 
     return *this;    
 
@@ -124,7 +124,7 @@ void Player::Copy(Player const &other){
 
 }
 
-void Player::Move(Player &&other){
+void Player::MoveObject(Player &&other){
 
     m_Name = std::exchange(other.m_Name, nullptr);
     m_AttackDamage = other.m_AttackDamage;
@@ -134,7 +134,7 @@ void Player::Move(Player &&other){
 }
 
 void Player::Free(){
-    delete m_Name;
+    delete[] m_Name;
 }
 
 std::ostream &operator <<(std::ostream &os, Point point){

@@ -27,7 +27,7 @@ protected:
 
 private:
     void Copy(Mage const &other);
-    void Move(Mage &&other);
+    void MoveObject(Mage &&other);
     void Free();
 
 private:
