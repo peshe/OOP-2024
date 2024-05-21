@@ -109,10 +109,10 @@ void PlayerCollection::Copy(PlayerCollection const &other){
     m_Size = other.m_Size;
     for(size_t i = 0; i < other.m_Size; ++i)
         try{ m_Data[i] = other.m_Data[i] -> Clone(); }
-        catch(std::bad_alloc &ex){
+        catch(std::bad_alloc const &ex){
 
             Free(i);
-            throw ex;
+            throw;
 
         }
 
