@@ -97,7 +97,7 @@ void PlayerCollection::Resize(){
     Player **temp = new Player *[m_Capacity *= 2];
     for(size_t i = 0; i < m_Size; ++i)
         temp[i] = m_Data[i];
-    Free(m_Size);
+    delete[] m_Data;
     m_Data = temp;
 
 }
