@@ -299,3 +299,154 @@ int main() {
 	return 0;
 }
 ```
+
+---
+# Custom vector class
+```c++
+#include <iostream>
+#include <string>
+#include <sstream>
+#include "assert.h"
+
+using namespace std;
+
+template <typename T>
+class Vector {
+public:
+    Vector() : size(0), capacity(0), data(nullptr){}
+    
+    Vector(size_t capacity) : size(0), capacity(capacity), data(new T[capacity]) {}
+    
+    Vector(const Vector& other):data(nullptr){
+        copy(other);
+    }
+    
+    Vector& operator=(const Vector& other){
+        if(this != &other){
+            copy(other);
+        }
+        
+        return *this;
+    }
+    
+    ~Vector(){
+        delete[] data;
+    }
+    
+    void push_back(const T& el){
+        if(size >= capacity){
+            resize();
+        }
+        
+        data[size++] = el;
+    }
+    
+    void pop_back() noexcept {
+        if(!empty()){
+            size--;
+        }
+    }
+    
+    T& operator[](size_t index) {
+        if(index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        
+        return data[index];
+    }
+    
+    const T& operator[](size_t index) const {
+        if(index >= size) {
+            throw std::out_of_range("Index out of range.");
+        }
+        
+        return data[index];
+    }
+    
+    bool empty() const noexcept {
+        return size == 0;
+    }
+    
+    size_t getSize() const noexcept{
+        return size;
+    }
+    
+    void removeAt(size_t index) {
+        if(index >= size){
+            throw std::out_of_range("Index out of range.");
+        }
+        
+        if(capacity == 0){
+            throw std::runtime_error("The vector does not contain any elements");
+        }
+       
+        for (int i = index; i < size - 1; i++) {
+            data[i] = data[i + 1];
+        }
+        
+        size--;
+    }
+    
+    const T& first() const {
+        if(size == 0){
+            throw std::runtime_error("The vector does not contain any elements");
+        }
+        
+        return data[0];
+    }
+    
+    const T& last() const {
+        if(size == 0){
+            throw std::out_of_range("The vector does not contain any elements");
+        }
+        
+        return data[size - 1];
+    }
+private:
+    static constexpr unsigned int CAPACITY_GROWTH_FACTOR = 2;
+    
+    T* data;
+    size_t size;
+    size_t capacity;
+    
+    void resize(){
+        T* temp;
+        try{
+            size_t newCapacity = (capacity == 0 ? 1 : capacity) * CAPACITY_GROWTH_FACTOR;
+            temp = new T[newCapacity];
+            for (int i = 0; i < size; i++) {
+                temp[i] = data[i];
+            }
+            
+            delete[] data;
+            data = temp;
+            capacity = newCapacity;
+        }
+        catch(const std::bad_alloc& e) {
+            delete[] data;
+            throw;
+        }
+            
+    }
+    
+    void copy(const Vector& other){
+        T* temp;
+        try{
+            
+            temp = new T[other.capacity];
+            for (int i = 0; i < other.size; i++) {
+                temp[i] = other[i];
+            }
+            
+            delete[] data;
+            data = temp;
+            size = other.size;
+            capacity = other.capacity;
+        }
+        catch(const std::bad_alloc& e) {
+            delete[] data;
+            throw;
+        }
+    }
+};
+```
