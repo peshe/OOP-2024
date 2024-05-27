@@ -1930,4 +1930,7 @@ int main() {
 ---
 
 # Финална версия (applied best practices)
-TODO: Upload separated in files and add explanations
+Не напълно довършена версия на кода. може да видите във файловата система в папката `code`.
+Добавени са повече методи за логване и конфигурация, която позволява по-пълна настройка.
+
+![alt text](image.png)
