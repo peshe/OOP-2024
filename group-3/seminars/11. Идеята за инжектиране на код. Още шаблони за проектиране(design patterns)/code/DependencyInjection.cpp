@@ -5,13 +5,6 @@
 
 #pragma warning(disable:4996)
 
-
-
-
-
-
-
-
 int main() {
 	std::srand(std::time(0));
 
