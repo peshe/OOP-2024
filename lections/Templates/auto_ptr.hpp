@@ -49,13 +49,13 @@ public:
         return ptr != nullptr;
     }
 
-    Type operator*()
+    Type& operator*()
     {
         if (!ptr) throw std::runtime_error("Null pointer reference");
         return *ptr;
     }
 
-    const Type operator*() const
+    const Type& operator*() const
     {
         if (!ptr) throw std::runtime_error("Null pointer reference");
         return *ptr;
@@ -135,7 +135,7 @@ public:
         if (this != &other) {
             release();
             control = other.control;
-            other.control->ptr = nullptr;
+            other.control = nullptr;
         }
         return *this;
     }
